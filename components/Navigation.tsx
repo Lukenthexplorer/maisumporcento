@@ -25,7 +25,7 @@ export function Navigation() {
   ]
 
   return (
-    <nav className="w-64 bg-white border-r border-neutral-200 min-h-screen flex flex-col">
+    <nav className="hidden lg:flex w-64 bg-white border-r border-neutral-200 min-h-screen flex-col fixed">
       <div className="p-6 border-b border-neutral-200">
         <Link href="/dashboard" className="text-xl font-semibold text-neutral-900">
           maisumporcento

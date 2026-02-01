@@ -1,6 +1,7 @@
 'use client'
 
 import { Navigation } from '@/components/Navigation'
+import { MobileNav } from '@/components/MobileNav'
 import { useUser } from '@/contexts/UserContext'
 
 export default function AuthenticatedLayout({
@@ -19,9 +20,17 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-neutral-50">
-      <Navigation />
-      <main className="flex-1 overflow-auto">
+    <div className="min-h-screen bg-neutral-50">
+      {/* Navegação Desktop - esconde no mobile */}
+      <div className="hidden lg:flex">
+        <Navigation />
+      </div>
+
+      {/* Navegação Mobile */}
+      <MobileNav />
+
+      {/* Conteúdo principal */}
+      <main className="lg:ml-64">
         {children}
       </main>
     </div>
