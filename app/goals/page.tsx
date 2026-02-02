@@ -178,16 +178,17 @@ export default function GoalsPage() {
 
   return (
     <AuthenticatedLayout>
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-8 sm:space-y-12">
+        {/* Objetivos */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold text-neutral-900">Objetivos</h2>
-              <p className="text-neutral-600 text-sm mt-1">Bússolas, não cobranças</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Objetivos</h2>
+              <p className="text-neutral-600 text-xs sm:text-sm mt-1">Bússolas, não cobranças</p>
             </div>
             <button
               onClick={() => setShowNewGoal(true)}
-              className="btn-primary"
+              className="btn-primary text-sm sm:text-base w-full sm:w-auto"
             >
               Novo objetivo
             </button>
@@ -200,7 +201,7 @@ export default function GoalsPage() {
                 value={newGoalTitle}
                 onChange={(e) => setNewGoalTitle(e.target.value)}
                 placeholder="Título do objetivo"
-                className="input"
+                className="input text-sm sm:text-base"
                 required
                 autoFocus
               />
@@ -208,14 +209,14 @@ export default function GoalsPage() {
                 value={newGoalDescription}
                 onChange={(e) => setNewGoalDescription(e.target.value)}
                 placeholder="Descrição (opcional)"
-                className="input min-h-[100px]"
+                className="input min-h-[100px] text-sm sm:text-base"
               />
-              <div className="flex gap-2">
-                <button type="submit" className="btn-primary">Criar</button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button type="submit" className="btn-primary text-sm sm:text-base">Criar</button>
                 <button
                   type="button"
                   onClick={() => setShowNewGoal(false)}
-                  className="btn-secondary"
+                  className="btn-secondary text-sm sm:text-base"
                 >
                   Cancelar
                 </button>
@@ -226,16 +227,16 @@ export default function GoalsPage() {
           <div className="space-y-3">
             {goals.map((goal) => (
               <div key={goal.id} className="card">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-neutral-900">{goal.title}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-neutral-900 text-sm sm:text-base">{goal.title}</h3>
                     {goal.description && (
-                      <p className="text-sm text-neutral-600 mt-1">{goal.description}</p>
+                      <p className="text-xs sm:text-sm text-neutral-600 mt-1 break-words">{goal.description}</p>
                     )}
                   </div>
                   <button
                     onClick={() => deleteGoal(goal.id)}
-                    className="text-neutral-400 hover:text-neutral-600 ml-4"
+                    className="text-neutral-400 hover:text-neutral-600 flex-shrink-0"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -246,22 +247,23 @@ export default function GoalsPage() {
             ))}
 
             {goals.length === 0 && !showNewGoal && (
-              <div className="card text-neutral-600">
+              <div className="card text-neutral-600 text-sm sm:text-base">
                 Nenhum objetivo criado ainda.
               </div>
             )}
           </div>
         </section>
 
+        {/* Hábitos */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold text-neutral-900">Hábitos</h2>
-              <p className="text-neutral-600 text-sm mt-1">Menos de 30 segundos para criar</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Hábitos</h2>
+              <p className="text-neutral-600 text-xs sm:text-sm mt-1">Menos de 30 segundos para criar</p>
             </div>
             <button
               onClick={() => setShowNewHabit(true)}
-              className="btn-primary"
+              className="btn-primary text-sm sm:text-base w-full sm:w-auto"
             >
               Novo hábito
             </button>
@@ -274,7 +276,7 @@ export default function GoalsPage() {
                 value={newHabitTitle}
                 onChange={(e) => setNewHabitTitle(e.target.value)}
                 placeholder="Ex: Meditar 10 minutos"
-                className="input"
+                className="input text-sm sm:text-base"
                 required
                 autoFocus
               />
@@ -283,14 +285,14 @@ export default function GoalsPage() {
                 value={newHabitIdentity}
                 onChange={(e) => setNewHabitIdentity(e.target.value)}
                 placeholder="Identidade: Sou uma pessoa que... (opcional)"
-                className="input"
+                className="input text-sm sm:text-base"
               />
-              <div className="flex gap-2">
-                <button type="submit" className="btn-primary">Criar</button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button type="submit" className="btn-primary text-sm sm:text-base">Criar</button>
                 <button
                   type="button"
                   onClick={() => setShowNewHabit(false)}
-                  className="btn-secondary"
+                  className="btn-secondary text-sm sm:text-base"
                 >
                   Cancelar
                 </button>
@@ -301,12 +303,12 @@ export default function GoalsPage() {
           <div className="space-y-3">
             {habits.map((habit) => (
               <div key={habit.id} className="card">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-neutral-900">{habit.title}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-semibold text-neutral-900 text-sm sm:text-base break-words">{habit.title}</h3>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${
+                        className={`text-xs px-2 py-1 rounded flex-shrink-0 ${
                           habit.active
                             ? 'bg-green-100 text-green-700'
                             : 'bg-neutral-100 text-neutral-600'
@@ -316,13 +318,13 @@ export default function GoalsPage() {
                       </span>
                     </div>
                     {habit.identity_label && (
-                      <p className="text-sm text-neutral-600 mt-1">{habit.identity_label}</p>
+                      <p className="text-xs sm:text-sm text-neutral-600 mt-1 break-words">{habit.identity_label}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => toggleHabitActive(habit.id, habit.active)}
-                      className="text-sm text-neutral-600 hover:text-neutral-900"
+                      className="text-xs sm:text-sm text-neutral-600 hover:text-neutral-900 whitespace-nowrap"
                     >
                       {habit.active ? 'Pausar' : 'Ativar'}
                     </button>
@@ -340,7 +342,7 @@ export default function GoalsPage() {
             ))}
 
             {habits.length === 0 && !showNewHabit && (
-              <div className="card text-neutral-600">
+              <div className="card text-neutral-600 text-sm sm:text-base">
                 Nenhum hábito criado ainda.
               </div>
             )}

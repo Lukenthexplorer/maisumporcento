@@ -62,31 +62,24 @@ export default function DashboardPage() {
 
   const toggleHabit = async (habitId: string, currentStatus: boolean) => {
     if (!user) return
-  
+
     try {
       if (!currentStatus) {
-        // Debug: ver a data que está sendo salva
-        console.log('📅 Salvando check para:', today)
-        
-        const { data, error } = await supabase.from('habit_checks').insert([
+        await supabase.from('habit_checks').insert([
           {
             habit_id: habitId,
             date: today,
             completed: true,
           },
-        ]).select()
-  
-        console.log('✅ Check salvo:', data)
-        if (error) console.error('❌ Erro:', error)
+        ])
       } else {
-        console.log('🗑️ Removendo check de:', today)
         await supabase
           .from('habit_checks')
           .delete()
           .eq('habit_id', habitId)
           .eq('date', today)
       }
-  
+
       loadHabits()
     } catch (error) {
       console.error('Erro ao atualizar hábito:', error)
@@ -108,10 +101,10 @@ export default function DashboardPage() {
 
   return (
     <AuthenticatedLayout>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
+      <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-neutral-900">Hoje</h1>
-          <p className="text-neutral-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Hoje</h1>
+          <p className="text-sm sm:text-base text-neutral-600">
             {completedCount > 0 
               ? `Você completou ${completedCount}/${totalCount} hábitos hoje.`
               : 'Hoje conta.'
@@ -121,10 +114,10 @@ export default function DashboardPage() {
 
         {habits.length === 0 ? (
           <div className="card space-y-4">
-            <p className="text-neutral-600">
+            <p className="text-neutral-600 text-sm sm:text-base">
               Você ainda não criou nenhum hábito.
             </p>
-            <Link href="/goals" className="btn-primary inline-block">
+            <Link href="/goals" className="btn-primary inline-block text-sm sm:text-base">
               Criar primeiro hábito
             </Link>
           </div>
@@ -132,11 +125,11 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {habits.map((habit) => (
               <div key={habit.id} className="card">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <button
                     onClick={() => toggleHabit(habit.id, habit.completed_today)}
                     className={`
-                      w-12 h-12 rounded-lg border-2 flex items-center justify-center
+                      w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 flex items-center justify-center flex-shrink-0
                       transition-all
                       ${habit.completed_today
                         ? 'bg-neutral-900 border-neutral-900'
@@ -146,7 +139,7 @@ export default function DashboardPage() {
                   >
                     {habit.completed_today && (
                       <svg
-                        className="w-6 h-6 text-white"
+                        className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -161,10 +154,12 @@ export default function DashboardPage() {
                     )}
                   </button>
 
-                  <div className="flex-1">
-                    <h3 className="font-medium text-neutral-900">{habit.title}</h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-neutral-900 text-sm sm:text-base truncate">
+                      {habit.title}
+                    </h3>
                     {habit.identity_label && (
-                      <p className="text-sm text-neutral-500 mt-1">
+                      <p className="text-xs sm:text-sm text-neutral-500 mt-1 line-clamp-2">
                         {habit.identity_label}
                       </p>
                     )}
@@ -176,8 +171,8 @@ export default function DashboardPage() {
         )}
 
         {habits.length > 0 && (
-          <div className="text-center pt-8">
-            <p className="text-neutral-500 text-sm">
+          <div className="text-center pt-4 sm:pt-8">
+            <p className="text-neutral-500 text-xs sm:text-sm">
               {completedCount === totalCount && totalCount > 0
                 ? 'Consistência vence intensidade.'
                 : 'Pequenas ações. Resultados inevitáveis.'

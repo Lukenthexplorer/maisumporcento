@@ -99,15 +99,15 @@ export default function ProfilePage() {
 
   return (
     <AuthenticatedLayout>
-      <div className="max-w-2xl mx-auto px-6 py-12 space-y-8">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-neutral-900">Perfil</h1>
-          <p className="text-neutral-600">Gerencie suas informações</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Perfil</h1>
+          <p className="text-sm sm:text-base text-neutral-600">Gerencie suas informações</p>
         </div>
 
-        <form onSubmit={handleSave} className="card space-y-6">
+        <form onSubmit={handleSave} className="card space-y-4 sm:space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
+            <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-neutral-700 mb-2">
               Nome
             </label>
             <input
@@ -115,28 +115,28 @@ export default function ProfilePage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input"
+              className="input text-sm sm:text-base"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-neutral-700 mb-2">
               E-mail
             </label>
             <input
               type="email"
               value={user?.email || ''}
-              className="input bg-neutral-100"
+              className="input bg-neutral-100 text-sm sm:text-base"
               disabled
             />
-            <p className="text-sm text-neutral-500 mt-1">
+            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
               O e-mail não pode ser alterado
             </p>
           </div>
 
           {message && (
-            <div className={`p-3 rounded-lg text-sm ${
+            <div className={`p-3 rounded-lg text-xs sm:text-sm ${
               message.includes('sucesso')
                 ? 'bg-green-50 border border-green-200 text-green-700'
                 : 'bg-red-50 border border-red-200 text-red-700'
@@ -148,19 +148,19 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="btn-primary"
+            className="btn-primary w-full text-sm sm:text-base"
           >
             {saving ? 'Salvando...' : 'Salvar alterações'}
           </button>
         </form>
 
         <div className="card space-y-4">
-          <h2 className="text-lg font-semibold text-neutral-900">Preferências</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-neutral-900">Preferências</h2>
           
           <div className="flex items-center justify-between py-3 border-b border-neutral-200">
             <div>
-              <div className="font-medium text-neutral-900">Lembretes diários</div>
-              <div className="text-sm text-neutral-600">Receber lembretes por e-mail</div>
+              <div className="font-medium text-neutral-900 text-sm sm:text-base">Lembretes diários</div>
+              <div className="text-xs sm:text-sm text-neutral-600">Receber lembretes por e-mail</div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" />
@@ -168,23 +168,23 @@ export default function ProfilePage() {
             </label>
           </div>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs sm:text-sm text-neutral-500">
             Mais preferências em breve
           </p>
         </div>
 
         <div className="card border-red-200 space-y-4">
-          <h2 className="text-lg font-semibold text-red-700">Zona de perigo</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-red-700">Zona de perigo</h2>
           
           <div className="space-y-2">
-            <p className="text-sm text-neutral-600">
+            <p className="text-xs sm:text-sm text-neutral-600">
               Excluir sua conta removerá permanentemente todos os seus dados, incluindo hábitos, 
               progresso e objetivos. Esta ação não pode ser desfeita.
             </p>
             <button
               type="button"
               onClick={handleDeleteAccount}
-              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
             >
               Excluir minha conta
             </button>

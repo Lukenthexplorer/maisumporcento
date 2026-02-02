@@ -51,9 +51,6 @@ export default function ProgressPage() {
         .order('date', { ascending: true })
   
       if (error) throw error
-
-      console.log('📊 Checks encontrados:', checks?.length)
-      console.log('🔍 Todos os checks:', checks)
   
       const dateMap = new Map<string, Set<string>>()
       
@@ -70,9 +67,6 @@ export default function ProgressPage() {
         date,
         count: habitIds.size,
       }))
-
-      console.log('📈 Heatmap gerado:', heatmap)
-      console.log('📅 Hoje deveria ter:', heatmap.find(h => h.date === new Date().toISOString().split('T')[0]))
   
       setHeatmapData(heatmap)
       calculateStreaks(Array.from(dateMap.keys()).sort())
@@ -143,9 +137,6 @@ export default function ProgressPage() {
     startDate.setDate(startDate.getDate() - daysToMonday)
 
     const dataMap = new Map(heatmapData.map(d => [d.date, d.count]))
-    
-    console.log('🗓️ Renderizando de', startDate.toISOString().split('T')[0], 'até', today.toISOString().split('T')[0])
-    console.log('📊 dataMap contém:', Array.from(dataMap.entries()))
 
     const totalDays = Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
     const totalWeeks = Math.ceil(totalDays / 7)
@@ -166,13 +157,10 @@ export default function ProgressPage() {
         weeks.push(week)
       }
     }
-    
-    console.log('📊 Total de semanas:', weeks.length)
-    console.log('🎨 Última semana:', weeks[weeks.length - 1])
 
     return (
-      <div className="overflow-x-auto pb-4">
-        <div className="inline-flex gap-1">
+      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 pb-4">
+        <div className="inline-flex gap-1 min-w-max">
           {weeks.reverse().map((week, weekIdx) => (
             <div key={weekIdx} className="flex flex-col gap-1">
               {week.map((day, dayIdx) => {
@@ -188,7 +176,7 @@ export default function ProgressPage() {
                 return (
                   <div
                     key={dayIdx}
-                    className={`w-3 h-3 rounded-sm ${colors[intensity]}`}
+                    className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm ${colors[intensity]}`}
                     title={`${day.date}: ${day.count} hábitos`}
                   />
                 )
@@ -212,52 +200,52 @@ export default function ProgressPage() {
 
   return (
     <AuthenticatedLayout>
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-neutral-900">Progresso</h1>
-              <p className="text-neutral-600">Consistência é tudo.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Progresso</h1>
+              <p className="text-sm sm:text-base text-neutral-600">Consistência é tudo.</p>
             </div>
             <button
               onClick={() => loadProgressData()}
-              className="btn-secondary"
+              className="btn-secondary text-sm sm:text-base w-full sm:w-auto"
             >
               Atualizar
             </button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="card">
-            <div className="text-sm text-neutral-600 mb-1">Sequência atual</div>
-            <div className="text-4xl font-bold text-neutral-900">
+            <div className="text-xs sm:text-sm text-neutral-600 mb-1">Sequência atual</div>
+            <div className="text-3xl sm:text-4xl font-bold text-neutral-900">
               {currentStreak} {currentStreak === 1 ? 'dia' : 'dias'}
             </div>
           </div>
           
           <div className="card">
-            <div className="text-sm text-neutral-600 mb-1">Melhor sequência</div>
-            <div className="text-4xl font-bold text-neutral-900">
+            <div className="text-xs sm:text-sm text-neutral-600 mb-1">Melhor sequência</div>
+            <div className="text-3xl sm:text-4xl font-bold text-neutral-900">
               {maxStreak} {maxStreak === 1 ? 'dia' : 'dias'}
             </div>
           </div>
         </div>
 
         <div className="card">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-neutral-900 mb-3 sm:mb-4">
             Últimos 12 meses
           </h2>
           {renderHeatmap()}
           
-          <div className="flex items-center gap-2 text-xs text-neutral-500 mt-4">
+          <div className="flex items-center gap-2 text-xs text-neutral-500 mt-3 sm:mt-4">
             <span>Menos</span>
             <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-sm bg-neutral-100" />
-              <div className="w-3 h-3 rounded-sm bg-neutral-300" />
-              <div className="w-3 h-3 rounded-sm bg-neutral-500" />
-              <div className="w-3 h-3 rounded-sm bg-neutral-700" />
-              <div className="w-3 h-3 rounded-sm bg-neutral-900" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-100" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-300" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-500" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-700" />
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-neutral-900" />
             </div>
             <span>Mais</span>
           </div>
@@ -265,7 +253,7 @@ export default function ProgressPage() {
 
         {currentStreak === 0 && heatmapData.length > 0 && (
           <div className="card bg-neutral-900 text-white">
-            <p className="text-sm">
+            <p className="text-xs sm:text-sm">
               A regra é não falhar duas vezes.
             </p>
           </div>
@@ -273,7 +261,7 @@ export default function ProgressPage() {
 
         {heatmapData.length === 0 && (
           <div className="card">
-            <p className="text-neutral-600">
+            <p className="text-neutral-600 text-sm sm:text-base">
               Comece marcando seus hábitos no dashboard. Seu progresso aparecerá aqui.
             </p>
           </div>
