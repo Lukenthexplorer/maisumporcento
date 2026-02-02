@@ -120,6 +120,32 @@ export type Database = {
           habit_id?: string
         }
       }
+      daily_notes: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          content: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          content?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          content?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
