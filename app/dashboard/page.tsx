@@ -1,173 +1,190 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useUser } from '@/contexts/UserContext'
 import { createClient } from '@/lib/supabase'
+import { DailyNote } from '@/components/DailyNote'
+import AuthenticatedLayout from '@/components/AuthenticatedLayout'
+import Link from 'next/link'
 
-/**
- * Componente de registro diário opcional (versão com debounce via ref)
- */
-export function DailyNote() {
+interface Habit {
+  id: string
+  title: string
+  identity_label: string | null
+  completed_today: boolean
+}
+
+export default function DashboardPage() {
   const { user } = useUser()
-  const [content, setContent] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
-  const saveTimeoutRef = useRef<number | null>(null)
+  const [habits, setHabits] = useState<Habit[]>([])
+  const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
   const today = new Date().toISOString().split('T')[0]
 
-  // Prompts rotativos - escolhe um baseado no dia
-  const prompts = [
-    "Uma coisa que valeu a pena hoje:",
-    "Algo pequeno que aprendi hoje:",
-    "O que funcionou hoje?",
-  ]
-  const promptIndex = new Date().getDate() % prompts.length
-  const currentPrompt = prompts[promptIndex]
-
-  // Carregar nota do dia ao montar (ou quando user mudar)
-  useEffect(() => {
-    const loadNote = async () => {
-      if (!user) return
-
-      try {
-        const { data, error } = await supabase
-          .from('daily_notes')
-          .select('content')
-          .eq('user_id', user.id)
-          .eq('date', today)
-          .maybeSingle()
-
-        if (error && (error as any).code !== 'PGRST116') {
-          console.error('Erro ao carregar nota:', error)
-          return
-        }
-
-        if (data) {
-          setContent(data.content || '')
-        } else {
-          setContent('')
-        }
-      } catch (err) {
-        console.error('Erro ao carregar nota:', err)
-      }
-    }
-
-    loadNote()
-
-    return () => {
-      // cleanup se necessário
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-      }
-    }
-    // Intentional: dependemos só de user e today
-  }, [user, today, supabase])
-
-  // Salvar a nota (upsert). Deixo upsert para simplicidade.
-  const saveNote = useCallback(async (text: string) => {
+  const loadHabits = async () => {
     if (!user) return
 
-    setIsSaving(true)
     try {
-      const cleaned = text.trim()
+      const { data: habitsData, error: habitsError } = await supabase
+        .from('habits')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('active', true)
+        .order('created_at', { ascending: true })
 
-      if (cleaned.length === 0) {
-        // opcional: deletar nota quando vazia
-        // await supabase.from('daily_notes').delete().match({ user_id: user.id, date: today })
-        // return
-      }
+      if (habitsError) throw habitsError
 
-      const { error } = await supabase
-        .from('daily_notes')
-        .upsert(
-          {
-            user_id: user.id,
-            date: today,
-            content: cleaned,
-          },
-          { onConflict: 'user_id,date' }
-        )
+      const { data: checksData, error: checksError } = await supabase
+        .from('habit_checks')
+        .select('habit_id, completed')
+        .eq('date', today)
+        .eq('completed', true)
 
-      if (error) {
-        console.error('Erro ao salvar nota:', error)
-      }
-    } catch (err) {
-      console.error('Erro ao salvar nota:', err)
+      if (checksError) throw checksError
+
+      const checksMap = new Map(checksData?.map(c => [c.habit_id, true]) || [])
+      const habitsWithStatus = habitsData?.map(h => ({
+        ...h,
+        completed_today: checksMap.has(h.id),
+      })) || []
+
+      setHabits(habitsWithStatus)
+    } catch (error) {
+      console.error('Erro ao carregar hábitos:', error)
     } finally {
-      setIsSaving(false)
+      setLoading(false)
     }
-  }, [user, today, supabase])
-
-  // Handler com debounce via ref
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = e.target.value
-
-    if (newContent.length > 500) return
-
-    setContent(newContent)
-
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
-    }
-
-    // window.setTimeout retorna number no browser; guardamos como number
-    saveTimeoutRef.current = window.setTimeout(() => {
-      // só salvamos quando tiver algo trimado — evita criar linhas só com espaços
-      if (newContent.trim().length > 0) {
-        saveNote(newContent)
-      } else {
-        // opcional: se quiser deletar a nota quando o usuário apagar tudo, descomente:
-        // saveNote('') ou chamada específica de delete no supabase
-      }
-      saveTimeoutRef.current = null
-    }, 800)
   }
 
-  // cleanup no unmount
   useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
+    loadHabits()
+  }, [user])
+
+  const toggleHabit = async (habitId: string, currentStatus: boolean) => {
+    if (!user) return
+
+    try {
+      if (!currentStatus) {
+        await supabase.from('habit_checks').insert([
+          {
+            habit_id: habitId,
+            date: today,
+            completed: true,
+          },
+        ])
+      } else {
+        await supabase
+          .from('habit_checks')
+          .delete()
+          .eq('habit_id', habitId)
+          .eq('date', today)
       }
+
+      loadHabits()
+    } catch (error) {
+      console.error('Erro ao atualizar hábito:', error)
     }
-  }, [])
+  }
+
+  const completedCount = habits.filter(h => h.completed_today).length
+  const totalCount = habits.length
+
+  if (loading) {
+    return (
+      <AuthenticatedLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-neutral-600">Carregando...</div>
+        </div>
+      </AuthenticatedLayout>
+    )
+  }
 
   return (
-    <div className="mt-8 pt-8 border-t border-neutral-200">
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-neutral-700">Registrar o dia</h3>
-          {isSaving && <span className="text-xs text-neutral-400">Salvando...</span>}
+    <AuthenticatedLayout>
+      <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Hoje</h1>
+          <p className="text-sm sm:text-base text-neutral-600">
+            {completedCount > 0 
+              ? `Você completou ${completedCount}/${totalCount} hábitos hoje.`
+              : 'Hoje conta.'
+            }
+          </p>
         </div>
 
-        <div className="relative">
-          <textarea
-            value={content}
-            onChange={handleChange}
-            placeholder={currentPrompt}
-            className="w-full px-4 py-3 border border-neutral-200 rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-transparent
-                     resize-none text-sm sm:text-base text-neutral-900 placeholder:text-neutral-400
-                     transition-all"
-            rows={3}
-            maxLength={500}
-            aria-label="Registro diário"
-          />
+        {habits.length === 0 ? (
+          <div className="card space-y-4">
+            <p className="text-neutral-600 text-sm sm:text-base">
+              Você ainda não criou nenhum hábito.
+            </p>
+            <Link href="/goals" className="btn-primary inline-block text-sm sm:text-base">
+              Criar primeiro hábito
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {habits.map((habit) => (
+              <div key={habit.id} className="card">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <button
+                    onClick={() => toggleHabit(habit.id, habit.completed_today)}
+                    className={`
+                      w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 flex items-center justify-center flex-shrink-0
+                      transition-all
+                      ${habit.completed_today
+                        ? 'bg-neutral-900 border-neutral-900'
+                        : 'border-neutral-300 hover:border-neutral-400'
+                      }
+                    `}
+                  >
+                    {habit.completed_today && (
+                      <svg
+                        className="w-5 h-5 sm:w-6 sm:h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </button>
 
-          {content.length > 0 && (
-            <div className="absolute bottom-2 right-2 text-xs text-neutral-400">
-              {content.length}/500
-            </div>
-          )}
-        </div>
-
-        {content.trim().length > 0 && (
-          <p className="text-xs text-neutral-500">Seu registro está seguro.</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-neutral-900 text-sm sm:text-base truncate">
+                      {habit.title}
+                    </h3>
+                    {habit.identity_label && (
+                      <p className="text-xs sm:text-sm text-neutral-500 mt-1 line-clamp-2">
+                        {habit.identity_label}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
+
+        {habits.length > 0 && (
+          <div className="text-center pt-4 sm:pt-8">
+            <p className="text-neutral-500 text-xs sm:text-sm">
+              {completedCount === totalCount && totalCount > 0
+                ? 'Consistência vence intensidade.'
+                : 'Pequenas ações. Resultados inevitáveis.'
+              }
+            </p>
+          </div>
+        )}
+
+        {habits.length > 0 && <DailyNote />}
+
       </div>
-    </div>
+    </AuthenticatedLayout>
   )
 }
-
-export default DailyNote
