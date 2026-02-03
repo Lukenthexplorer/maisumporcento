@@ -1,5 +1,19 @@
 'use client'
 
+import { 
+  Target, 
+  Dumbbell, 
+  Activity, 
+  Apple, 
+  BookOpen, 
+  Brain, 
+  Droplet, 
+  Moon, 
+  Heart, 
+  Code, 
+  Music, 
+  Users 
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useUser } from '@/contexts/UserContext'
 import { createClient } from '@/lib/supabase'
@@ -18,6 +32,22 @@ interface Habit {
   frequency: 'daily' | 'weekly'
   time_hint: string | null
   active: boolean
+  icon: string
+}
+
+const AVAILABLE_ICONS = {
+  target: { icon: Target, label: 'Objetivo' },
+  dumbbell: { icon: Dumbbell, label: 'Treino' },
+  running: { icon: Activity, label: 'Corrida' },
+  apple: { icon: Apple, label: 'Alimentação' },
+  book: { icon: BookOpen, label: 'Leitura' },
+  brain: { icon: Brain, label: 'Mental' },
+  water: { icon: Droplet, label: 'Hidratação' },
+  moon: { icon: Moon, label: 'Sono' },
+  heart: { icon: Heart, label: 'Saúde' },
+  code: { icon: Code, label: 'Trabalho' },
+  music: { icon: Music, label: 'Arte' },
+  users: { icon: Users, label: 'Social' },
 }
 
 export default function GoalsPage() {
@@ -32,6 +62,7 @@ export default function GoalsPage() {
   const [newGoalDescription, setNewGoalDescription] = useState('')
   const [newHabitTitle, setNewHabitTitle] = useState('')
   const [newHabitIdentity, setNewHabitIdentity] = useState('')
+  const [newHabitIcon, setNewHabitIcon] = useState('target')
   
   const supabase = createClient()
 
@@ -104,6 +135,7 @@ export default function GoalsPage() {
           identity_label: newHabitIdentity || null,
           frequency: 'daily',
           active: true,
+          icon: newHabitIcon,
         },
       ])
 
@@ -111,6 +143,7 @@ export default function GoalsPage() {
 
       setNewHabitTitle('')
       setNewHabitIdentity('')
+      setNewHabitIcon('target')
       setShowNewHabit(false)
       loadData()
     } catch (error) {
@@ -287,11 +320,40 @@ export default function GoalsPage() {
                 placeholder="Identidade: Sou uma pessoa que... (opcional)"
                 className="input text-sm sm:text-base"
               />
+              
+              {/* Seletor de ícone */}
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-3">
+                  Escolha um ícone:
+                </label>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {Object.entries(AVAILABLE_ICONS).map(([key, { icon: Icon, label }]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setNewHabitIcon(key)}
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
+                        newHabitIcon === key
+                          ? 'border-neutral-900 bg-neutral-100'
+                          : 'border-neutral-200 hover:border-neutral-300'
+                      }`}
+                      title={label}
+                    >
+                      <Icon className="w-6 h-6 text-neutral-700" />
+                      <span className="text-xs mt-1 text-neutral-600">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-2">
                 <button type="submit" className="btn-primary text-sm sm:text-base">Criar</button>
                 <button
                   type="button"
-                  onClick={() => setShowNewHabit(false)}
+                  onClick={() => {
+                    setShowNewHabit(false)
+                    setNewHabitIcon('target')
+                  }}
                   className="btn-secondary text-sm sm:text-base"
                 >
                   Cancelar
@@ -301,45 +363,52 @@ export default function GoalsPage() {
           )}
 
           <div className="space-y-3">
-            {habits.map((habit) => (
-              <div key={habit.id} className="card">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-semibold text-neutral-900 text-sm sm:text-base break-words">{habit.title}</h3>
-                      <span
-                        className={`text-xs px-2 py-1 rounded flex-shrink-0 ${
-                          habit.active
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-neutral-100 text-neutral-600'
-                        }`}
-                      >
-                        {habit.active ? 'Ativo' : 'Pausado'}
-                      </span>
+            {habits.map((habit) => {
+              const IconComponent = AVAILABLE_ICONS[habit.icon as keyof typeof AVAILABLE_ICONS]?.icon || Target
+              
+              return (
+                <div key={habit.id} className="card">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <IconComponent className="w-5 h-5 text-neutral-600" />
                     </div>
-                    {habit.identity_label && (
-                      <p className="text-xs sm:text-sm text-neutral-600 mt-1 break-words">{habit.identity_label}</p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => toggleHabitActive(habit.id, habit.active)}
-                      className="text-xs sm:text-sm text-neutral-600 hover:text-neutral-900 whitespace-nowrap"
-                    >
-                      {habit.active ? 'Pausar' : 'Ativar'}
-                    </button>
-                    <button
-                      onClick={() => deleteHabit(habit.id)}
-                      className="text-neutral-400 hover:text-neutral-600"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-semibold text-neutral-900 text-sm sm:text-base break-words">{habit.title}</h3>
+                        <span
+                          className={`text-xs px-2 py-1 rounded flex-shrink-0 ${
+                            habit.active
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-neutral-100 text-neutral-600'
+                          }`}
+                        >
+                          {habit.active ? 'Ativo' : 'Pausado'}
+                        </span>
+                      </div>
+                      {habit.identity_label && (
+                        <p className="text-xs sm:text-sm text-neutral-600 mt-1 break-words">{habit.identity_label}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => toggleHabitActive(habit.id, habit.active)}
+                        className="text-xs sm:text-sm text-neutral-600 hover:text-neutral-900 whitespace-nowrap"
+                      >
+                        {habit.active ? 'Pausar' : 'Ativar'}
+                      </button>
+                      <button
+                        onClick={() => deleteHabit(habit.id)}
+                        className="text-neutral-400 hover:text-neutral-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
 
             {habits.length === 0 && !showNewHabit && (
               <div className="card text-neutral-600 text-sm sm:text-base">
