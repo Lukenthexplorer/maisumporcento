@@ -5,8 +5,18 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       <header className="border-b border-neutral-200 bg-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-semibold">maisumporcento</div>
-          <div className="flex gap-4">
+          
+          <div className="text-xl font-semibold">
+            maisumporcento
+          </div>
+
+          <nav className="flex items-center gap-8 text-neutral-600">
+            <div className="hover:text-neutral-900 cursor-pointer">Início</div>
+            <div className="hover:text-neutral-900 cursor-pointer">Manifesto</div>
+            <div className="hover:text-neutral-900 cursor-pointer">Recursos</div>
+          </nav>
+
+          <div className="flex items-center gap-8">
             <Link href="/login" className="text-neutral-600 hover:text-neutral-900">
               Entrar
             </Link>
@@ -14,9 +24,9 @@ export default function Home() {
               Começar
             </Link>
           </div>
+
         </div>
       </header>
-
       <section className="flex-1 flex items-center justify-center px-6 py-20">
         <div className="max-w-3xl text-center space-y-8">
           <h1 className="text-5xl md:text-6xl font-bold text-neutral-900 leading-tight">
