@@ -52,7 +52,6 @@ export function DailyNote() {
         setContent(data.content || '')
       }
     } catch (error) {
-      // Silenciosamente falha - não atrapalha o uso do app
       console.error('Erro ao carregar nota:', error)
     }
   }
@@ -78,7 +77,6 @@ export function DailyNote() {
         console.error('Erro ao salvar nota:', error)
       }
     } catch (error) {
-      // Silenciosamente falha - não atrapalha o uso do app
       console.error('Erro ao salvar nota:', error)
     } finally {
       setIsSaving(false)

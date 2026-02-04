@@ -182,9 +182,10 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* ADICIONAR AQUI - Registro diário opcional */}
         {habits.length > 0 && <DailyNote />}
 
-      </div>
+        </div> 
     </AuthenticatedLayout>
   )
 }
