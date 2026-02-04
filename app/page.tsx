@@ -145,66 +145,97 @@ export default function Home() {
         </div>
       </section>
 
-    <footer className="mt-12 border-t border-neutral-200 bg-neutral-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-          
-          {/* Left: brand + CTA */}
-          <div className="flex flex-col items-start gap-4 md:max-w-xs">
-            <div className="text-neutral-900 font-semibold text-base sm:text-lg">
-              maisumporcento
+      <section className="py-2 sm:py-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="bg-neutral-50 rounded-2xl p-6 sm:p-12 border border-neutral-100">
+            <div className="grid gap-8 md:grid-cols-2 items-center">
+              
+              {/* Imagem */}
+              <div className="flex justify-center md:justify-start">
+                <img
+                  src="/icons/office-worker.png"
+                  alt="Ilustração de organização e foco"
+                  className="w-56 sm:w-64 md:w-72"
+                />
+              </div>
+
+              {/* Texto */}
+              <div className="space-y-4 text-center md:text-left">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-neutral-900">
+                  Torne-se organizado
+                </h2>
+                <p className="text-neutral-600 text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
+                  Organização não é rigidez. É clareza.
+                  O maisumporcento ajuda você a enxergar seus hábitos com simplicidade,
+                  transformando intenção em rotina — um dia de cada vez.
+                </p>
+              </div>
+
             </div>
-
-            <p className="text-sm text-neutral-600">
-              1% melhor por dia. Consistência sobre intensidade.
-            </p>
-
-            <Link
-              href="/signup"
-              className="inline-block rounded-md px-4 py-2.5 text-sm font-medium bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow"
-            >
-              Criar conta gratuita
-            </Link>
-          </div>
-
-          {/* Right: links */}
-          <div className="grid grid-cols-2 gap-8 sm:gap-12">
-            <div>
-              <h4 className="text-xs font-semibold text-neutral-700 uppercase mb-3">
-                Empresa
-              </h4>
-              <ul className="space-y-2.5 text-sm text-neutral-600">
-                <li><Link href="#" className="hover:text-neutral-900 transition-colors">Sobre</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-semibold text-neutral-700 uppercase mb-3">
-                Produto
-              </h4>
-              <ul className="space-y-2.5 text-sm text-neutral-600">
-                <li><Link href="#" className="hover:text-neutral-900 transition-colors">Recursos</Link></li>
-                <li><Link href="#" className="hover:text-neutral-900 transition-colors">Ajuda</Link></li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="text-xs sm:text-sm text-neutral-500">
-            © {new Date().getFullYear()} maisumporcento, Inc.
-          </div>
-          
-          <div className="text-xs sm:text-sm text-neutral-500">
-            <Link href="#" className="hover:text-neutral-700 transition-colors">Termos</Link>
-            <span className="mx-2">•</span>
-            <Link href="#" className="hover:text-neutral-700 transition-colors">Privacidade</Link>
           </div>
         </div>
-      </div>
-    </footer>
+      </section>
+
+      <footer className="mt-12 border-t border-neutral-200 bg-neutral-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            
+            {/* Left: brand + CTA */}
+            <div className="flex flex-col items-start gap-4 md:max-w-xs">
+              <div className="text-neutral-900 font-semibold text-base sm:text-lg">
+                maisumporcento
+              </div>
+
+              <p className="text-sm text-neutral-600">
+                1% melhor por dia. Consistência sobre intensidade.
+              </p>
+
+              <Link
+                href="/signup"
+                className="inline-block rounded-md px-4 py-2.5 text-sm font-medium bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow"
+              >
+                Criar conta gratuita
+              </Link>
+            </div>
+
+            {/* Right: links */}
+            <div className="grid grid-cols-2 gap-8 sm:gap-12">
+              <div>
+                <h4 className="text-xs font-semibold text-neutral-700 uppercase mb-3">
+                  Empresa
+                </h4>
+                <ul className="space-y-2.5 text-sm text-neutral-600">
+                  <li><Link href="#" className="hover:text-neutral-900 transition-colors">Sobre</Link></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-semibold text-neutral-700 uppercase mb-3">
+                  Produto
+                </h4>
+                <ul className="space-y-2.5 text-sm text-neutral-600">
+                  <li><Link href="#" className="hover:text-neutral-900 transition-colors">Recursos</Link></li>
+                  <li><Link href="#" className="hover:text-neutral-900 transition-colors">Ajuda</Link></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom bar */}
+          <div className="mt-8 pt-6 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-xs sm:text-sm text-neutral-500">
+              © {new Date().getFullYear()} maisumporcento, Inc.
+            </div>
+            
+            <div className="text-xs sm:text-sm text-neutral-500">
+              <Link href="#" className="hover:text-neutral-700 transition-colors">Termos</Link>
+              <span className="mx-2">•</span>
+              <Link href="#" className="hover:text-neutral-700 transition-colors">Privacidade</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
 
     </main>
   )
