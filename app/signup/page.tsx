@@ -21,37 +21,43 @@ export default function SignupPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
+  
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      // Criar conta
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             name,
           },
-          emailRedirectTo: `${window.location.origin}/api/auth/callback`,
         },
       })
-
+  
       if (signUpError) throw signUpError
-
-      if (data.user) {
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert([
-            {
-              id: data.user.id,
-              name,
-            },
-          ])
-
-        if (insertError) {
-          console.error('Erro ao criar perfil:', insertError)
-        }
+  
+      if (!authData.user) {
+        throw new Error('Erro ao criar usuário')
       }
-
-      setSuccess(true)
+  
+      // Criar perfil do usuário no banco
+      const { error: profileError } = await supabase
+        .from('users')
+        .insert([
+          {
+            id: authData.user.id,
+            name,
+          },
+        ])
+  
+      if (profileError) {
+        console.error('Erro ao criar perfil:', profileError)
+        // Não bloqueia o fluxo se o trigger já criou o perfil
+      }
+  
+      // Redirecionar direto para o dashboard
+      router.push('/dashboard')
+      router.refresh()
     } catch (error: any) {
       setError(error.message || 'Erro ao criar conta')
     } finally {
