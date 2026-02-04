@@ -193,7 +193,7 @@ export default function EquilibrioPage() {
                     strokeWidth={2}
                   />
                   <Tooltip 
-                    formatter={(value: number) => [`${value}%`, 'Consistência']}
+                    formatter={(value: number | undefined) => [`${value ?? 0}%`, 'Consistência']}
                     contentStyle={{
                       backgroundColor: 'white',
                       border: '1px solid #e5e7eb',
