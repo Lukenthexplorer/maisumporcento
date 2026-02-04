@@ -165,9 +165,11 @@ export default function Home() {
                   Torne-se organizado
                 </h2>
                 <p className="text-neutral-600 text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
-                  Organização não é rigidez. É clareza.
+                  Organização não é rigidez! É Ter mais clareza.               
+                </p>
+                <p className="text-neutral-600 text-sm sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
                   O maisumporcento ajuda você a enxergar seus hábitos com simplicidade,
-                  transformando intenção em rotina — um dia de cada vez.
+                  transformando intenção em rotina: um dia de cada vez.
                 </p>
               </div>
 
