@@ -2,7 +2,7 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
 
@@ -10,15 +10,12 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Rotas públicas (não precisam de autenticação)
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/']
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname === route)
 
-  // Rotas protegidas
-  const protectedRoutes = ['/dashboard', '/progresso', '/goals', '/perfil']
+  const protectedRoutes = ['/dashboard', '/progresso', '/equilibrio', '/goals', '/perfil']
   const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
-  // Se está em rota protegida SEM sessão → redireciona para login
   if (isProtectedRoute && !session) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/login'
@@ -26,7 +23,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Se está em rota pública COM sessão → redireciona para dashboard
   if ((isPublicRoute && req.nextUrl.pathname !== '/') && session) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'

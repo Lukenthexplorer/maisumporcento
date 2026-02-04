@@ -1,15 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
-  images: {
-    domains: [],
-  },
-
   async headers() {
     return [
       {
@@ -20,8 +10,8 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
-    ];
+    ]
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
