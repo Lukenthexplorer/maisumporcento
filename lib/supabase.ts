@@ -41,6 +41,8 @@ export type Database = {
           time_hint: string | null
           created_at: string
           active: boolean
+          icon: string
+          category: string
         }
         Insert: {
           id?: string
@@ -51,6 +53,8 @@ export type Database = {
           time_hint?: string | null
           created_at?: string
           active?: boolean
+          icon?: string
+          category?: string
         }
         Update: {
           id?: string
@@ -61,6 +65,8 @@ export type Database = {
           time_hint?: string | null
           created_at?: string
           active?: boolean
+          icon?: string
+          category?: string
         }
       }
       habit_checks: {

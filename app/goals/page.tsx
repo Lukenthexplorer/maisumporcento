@@ -33,6 +33,7 @@ interface Habit {
   time_hint: string | null
   active: boolean
   icon: string
+  category: string
 }
 
 const AVAILABLE_ICONS = {
@@ -63,6 +64,7 @@ export default function GoalsPage() {
   const [newHabitTitle, setNewHabitTitle] = useState('')
   const [newHabitIdentity, setNewHabitIdentity] = useState('')
   const [newHabitIcon, setNewHabitIcon] = useState('target')
+  const [newHabitCategory, setNewHabitCategory] = useState('physical_health')
   
   const supabase = createClient()
 
@@ -136,6 +138,7 @@ export default function GoalsPage() {
           frequency: 'daily',
           active: true,
           icon: newHabitIcon,
+          category: newHabitCategory,
         },
       ])
 
@@ -144,6 +147,7 @@ export default function GoalsPage() {
       setNewHabitTitle('')
       setNewHabitIdentity('')
       setNewHabitIcon('target')
+      setNewHabitCategory('physical_health') 
       setShowNewHabit(false)
       loadData()
     } catch (error) {
@@ -344,6 +348,25 @@ export default function GoalsPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Seletor de categoria */}
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Categoria:
+                </label>
+                <select
+                  value={newHabitCategory}
+                  onChange={(e) => setNewHabitCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-300 text-sm sm:text-base"
+                >
+                  <option value="physical_health">Saúde física</option>
+                  <option value="mental_health">Saúde mental</option>
+                  <option value="spirituality">Espiritualidade</option>
+                  <option value="knowledge">Conhecimento</option>
+                  <option value="work">Trabalho</option>
+                  <option value="relationships">Relacionamentos</option>
+                </select>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2">

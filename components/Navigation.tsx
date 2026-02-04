@@ -20,6 +20,7 @@ export function Navigation() {
   const navItems = [
     { href: '/dashboard', label: 'Hoje' },
     { href: '/progresso', label: 'Progresso' },
+    { href: '/equilibrio', label: 'Equilíbrio' },
     { href: '/goals', label: 'Objetivos' },
     { href: '/perfil', label: 'Perfil' },
   ]

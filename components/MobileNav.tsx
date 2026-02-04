@@ -22,6 +22,7 @@ export function MobileNav() {
   const navItems = [
     { href: '/dashboard', label: 'Hoje', icon: '📅' },
     { href: '/progresso', label: 'Progresso', icon: '📊' },
+    { href: '/equilibrio', label: 'Equilíbrio', icon: '⚖️' },
     { href: '/goals', label: 'Objetivos', icon: '🎯' },
     { href: '/perfil', label: 'Perfil', icon: '👤' },
   ]
