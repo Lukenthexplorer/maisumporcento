@@ -184,6 +184,32 @@ export type Database = {
           updated_at?: string
         }
       }
+      user_onboarding: {
+        Row: {
+          user_id: string
+          completed: boolean
+          current_step: number
+          skipped: boolean
+          completed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          completed?: boolean
+          current_step?: number
+          skipped?: boolean
+          completed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          completed?: boolean
+          current_step?: number
+          skipped?: boolean
+          completed_at?: string | null
+          created_at?: string
+        }
+      }
     }
   }
 }

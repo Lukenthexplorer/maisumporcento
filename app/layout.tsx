@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { UserProvider } from '@/contexts/UserContext'
 import { Analytics } from '@vercel/analytics/react'
+import { Onboarding } from '@/components/Onboarding'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <UserProvider>
           {children}
+          <Onboarding />
         </UserProvider>
         <Analytics />
       </body>
