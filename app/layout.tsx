@@ -9,7 +9,11 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'maisumporcento – 1% melhor por dia',
-  description: 'Habit tracker minimalista focado em consistência, identidade e progresso incremental.',
+  description: 'Habit tracker minimalista focado em consistência, identidade e progresso incremental. Construa hábitos que duram.',
+  keywords: ['hábitos', 'habit tracker', 'produtividade', '1% melhor', 'consistência', 'atomic habits'],
+  authors: [{ name: 'maisumporcento' }],
+  creator: 'maisumporcento',
+  publisher: 'maisumporcento',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -19,6 +23,28 @@ export const metadata: Metadata = {
   icons: {
     icon: '/icon-192.png',
     apple: '/icon-192.png',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: 'https://maisumporcento.com.br',
+    title: 'maisumporcento – 1% melhor por dia',
+    description: 'Habit tracker minimalista focado em consistência, identidade e progresso incremental.',
+    siteName: 'maisumporcento',
+    images: [
+      {
+        url: 'https://maisumporcento.com.br/icon-512.png',
+        width: 512,
+        height: 512,
+        alt: 'maisumporcento logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'maisumporcento – 1% melhor por dia',
+    description: 'Habit tracker minimalista focado em consistência',
+    images: ['https://maisumporcento.com.br/icon-512.png'],
   },
 }
 
