@@ -210,6 +210,35 @@ export type Database = {
           created_at?: string
         }
       }
+      email_preferences: {
+        Row: {
+          user_id: string
+          daily_reminder: boolean
+          daily_reminder_time: string
+          weekly_summary: boolean
+          weekly_summary_day: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          daily_reminder?: boolean
+          daily_reminder_time?: string
+          weekly_summary?: boolean
+          weekly_summary_day?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          daily_reminder?: boolean
+          daily_reminder_time?: string
+          weekly_summary?: boolean
+          weekly_summary_day?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
