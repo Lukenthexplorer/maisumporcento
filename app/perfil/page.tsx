@@ -1,194 +1,184 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useUser } from '@/contexts/UserContext'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
+import { Download, LogOut, User, Mail } from 'lucide-react'
 
-export default function ProfilePage() {
+export default function PerfilPage() {
   const { user } = useUser()
+  const [loading, setLoading] = useState(false)
+  const [exporting, setExporting] = useState(false)
   const router = useRouter()
-  const [name, setName] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState('')
-  
   const supabase = createClient()
 
-  useEffect(() => {
-    loadProfile()
-  }, [user])
-
-  const loadProfile = async () => {
-    if (!user) return
-
+  const handleLogout = async () => {
+    setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('name')
-        .eq('id', user.id)
-        .single()
-
-      if (error) throw error
-
-      setName(data?.name || '')
+      await supabase.auth.signOut()
+      router.push('/')
     } catch (error) {
-      console.error('Erro ao carregar perfil:', error)
+      console.error('Erro ao fazer logout:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const exportData = async () => {
     if (!user) return
 
-    setSaving(true)
-    setMessage('')
+    setExporting(true)
 
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ name })
-        .eq('id', user.id)
+      // Buscar TODOS os dados do usuário
+      const [
+        { data: userData },
+        { data: habits },
+        { data: habitChecks },
+        { data: goals },
+        { data: dailyNotes },
+        { data: dailyTasks },
+      ] = await Promise.all([
+        supabase.from('users').select('*').eq('id', user.id).single(),
+        supabase.from('habits').select('*').eq('user_id', user.id),
+        supabase.from('habit_checks').select('*').in('habit_id', 
+          (await supabase.from('habits').select('id').eq('user_id', user.id)).data?.map(h => h.id) || []
+        ),
+        supabase.from('goals').select('*').eq('user_id', user.id),
+        supabase.from('daily_notes').select('*').eq('user_id', user.id),
+        supabase.from('daily_tasks').select('*').eq('user_id', user.id),
+      ])
 
-      if (error) throw error
+      // Montar objeto completo com todos os dados
+      const exportObject = {
+        exported_at: new Date().toISOString(),
+        user: userData,
+        habits: habits || [],
+        habit_checks: habitChecks || [],
+        goals: goals || [],
+        daily_notes: dailyNotes || [],
+        daily_tasks: dailyTasks || [],
+        stats: {
+          total_habits: habits?.length || 0,
+          total_checks: habitChecks?.length || 0,
+          total_goals: goals?.length || 0,
+          total_notes: dailyNotes?.length || 0,
+          total_tasks: dailyTasks?.length || 0,
+        }
+      }
 
-      setMessage('Perfil atualizado com sucesso')
+      // Criar arquivo JSON
+      const blob = new Blob([JSON.stringify(exportObject, null, 2)], {
+        type: 'application/json',
+      })
+
+      // Download automático
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `maisumporcento-dados-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      alert('Seus dados foram baixados com sucesso!')
     } catch (error) {
-      setMessage('Erro ao atualizar perfil')
-      console.error('Erro:', error)
+      console.error('Erro ao exportar dados:', error)
+      alert('Erro ao exportar dados. Tente novamente.')
     } finally {
-      setSaving(false)
+      setExporting(false)
     }
-  }
-
-  const handleDeleteAccount = async () => {
-    if (!confirm(
-      'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita e todos os seus dados serão permanentemente removidos.'
-    )) return
-
-    if (!confirm(
-      'Última confirmação: você tem certeza absoluta? Todos os seus hábitos e progresso serão perdidos.'
-    )) return
-
-    try {
-      await supabase.from('habit_checks').delete().eq('habit_id', user?.id)
-      await supabase.from('habits').delete().eq('user_id', user?.id)
-      await supabase.from('goals').delete().eq('user_id', user?.id)
-      await supabase.from('users').delete().eq('id', user?.id)
-
-      await supabase.auth.signOut()
-      router.push('/')
-    } catch (error) {
-      console.error('Erro ao deletar conta:', error)
-      alert('Erro ao deletar conta. Por favor, tente novamente.')
-    }
-  }
-
-  if (loading) {
-    return (
-      <AuthenticatedLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-neutral-600">Carregando...</div>
-        </div>
-      </AuthenticatedLayout>
-    )
   }
 
   return (
     <AuthenticatedLayout>
-      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Perfil</h1>
-          <p className="text-sm sm:text-base text-neutral-600">Gerencie suas informações</p>
-        </div>
-
-        <form onSubmit={handleSave} className="card space-y-4 sm:space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-neutral-700 mb-2">
-              Nome
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input text-sm sm:text-base"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-neutral-700 mb-2">
-              E-mail
-            </label>
-            <input
-              type="email"
-              value={user?.email || ''}
-              className="input bg-neutral-100 text-sm sm:text-base"
-              disabled
-            />
-            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-              O e-mail não pode ser alterado
-            </p>
-          </div>
-
-          {message && (
-            <div className={`p-3 rounded-lg text-xs sm:text-sm ${
-              message.includes('sucesso')
-                ? 'bg-green-50 border border-green-200 text-green-700'
-                : 'bg-red-50 border border-red-200 text-red-700'
-            }`}>
-              {message}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={saving}
-            className="btn-primary w-full text-sm sm:text-base"
-          >
-            {saving ? 'Salvando...' : 'Salvar alterações'}
-          </button>
-        </form>
-
-        <div className="card space-y-4">
-          <h2 className="text-base sm:text-lg font-semibold text-neutral-900">Preferências</h2>
-          
-          <div className="flex items-center justify-between py-3 border-b border-neutral-200">
-            <div>
-              <div className="font-medium text-neutral-900 text-sm sm:text-base">Lembretes diários</div>
-              <div className="text-xs sm:text-sm text-neutral-600">Receber lembretes por e-mail</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-900"></div>
-            </label>
-          </div>
-
-          <p className="text-xs sm:text-sm text-neutral-500">
-            Mais preferências em breve
+          <p className="text-sm sm:text-base text-neutral-600">
+            Gerencie sua conta e dados
           </p>
         </div>
 
-        <div className="card border-red-200 space-y-4">
-          <h2 className="text-base sm:text-lg font-semibold text-red-700">Zona de perigo</h2>
-          
-          <div className="space-y-2">
-            <p className="text-xs sm:text-sm text-neutral-600">
-              Excluir sua conta removerá permanentemente todos os seus dados, incluindo hábitos, 
-              progresso e objetivos. Esta ação não pode ser desfeita.
-            </p>
-            <button
-              type="button"
-              onClick={handleDeleteAccount}
-              className="px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
-            >
-              Excluir minha conta
-            </button>
+        {/* Informações do usuário */}
+        <div className="card space-y-4">
+          <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
+            <User className="w-5 h-5" />
+            Informações da conta
+          </h2>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
+              <User className="w-4 h-4 text-neutral-600" />
+              <div className="flex-1">
+                <p className="text-xs text-neutral-600">Nome</p>
+                <p className="text-sm font-medium text-neutral-900">
+                  {user?.user_metadata?.name || 'Usuário'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
+              <Mail className="w-4 h-4 text-neutral-600" />
+              <div className="flex-1">
+                <p className="text-xs text-neutral-600">E-mail</p>
+                <p className="text-sm font-medium text-neutral-900">
+                  {user?.email}
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Exportar dados - LGPD */}
+        <div className="card space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
+              <Download className="w-5 h-5" />
+              Seus dados
+            </h2>
+            <p className="text-sm text-neutral-600 mt-1">
+              De acordo com a LGPD, você pode baixar todos os seus dados
+            </p>
+          </div>
+
+          <button
+            onClick={exportData}
+            disabled={exporting}
+            className="btn-secondary w-full flex items-center justify-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            {exporting ? 'Exportando...' : 'Baixar meus dados (JSON)'}
+          </button>
+
+          <p className="text-xs text-neutral-500">
+            Isso vai baixar um arquivo JSON com todos os seus hábitos, objetivos, 
+            tarefas, notas e estatísticas.
+          </p>
+        </div>
+
+        {/* Sair */}
+        <div className="card">
+          <button
+            onClick={handleLogout}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {loading ? 'Saindo...' : 'Sair da conta'}
+          </button>
+        </div>
+
+        {/* Footer legal */}
+        <div className="text-center pt-8 border-t border-neutral-200">
+          <p className="text-xs text-neutral-500">
+            Seus dados são protegidos de acordo com a LGPD (Lei Geral de Proteção de Dados).
+            <br />
+            Nunca compartilhamos suas informações com terceiros.
+          </p>
         </div>
       </div>
     </AuthenticatedLayout>
