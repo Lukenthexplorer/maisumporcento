@@ -58,9 +58,10 @@ async function sendDailyReminderEmail(userId: string) {
     .eq('id', userId)
     .single()
 
-  const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId)
+  const { data: authData } = await supabaseAdmin.auth.admin.getUserById(userId)
 
-  if (!authUser || !authUser.user.email) return
+  // Verificações de segurança
+  if (!authData?.user?.email) return
 
   // Buscar hábitos ativos
   const { data: habits } = await supabaseAdmin
@@ -88,7 +89,7 @@ async function sendDailyReminderEmail(userId: string) {
       },
       body: JSON.stringify({
         from: 'maisumporcento <noreply@maisumporcento.com.br>',
-        to: authUser.user.email,
+        to: authData.user.email,
         subject: '✨ Seus hábitos de hoje',
         html: `
           <!DOCTYPE html>
@@ -164,9 +165,10 @@ async function sendWeeklySummaryEmail(userId: string) {
     .eq('id', userId)
     .single()
 
-  const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId)
+  const { data: authData } = await supabaseAdmin.auth.admin.getUserById(userId)
 
-  if (!authUser || !authUser.user.email) return
+  // Verificações de segurança
+  if (!authData?.user?.email) return
 
   // Calcular estatísticas da semana
   const today = new Date()
@@ -205,7 +207,7 @@ async function sendWeeklySummaryEmail(userId: string) {
       },
       body: JSON.stringify({
         from: 'maisumporcento <noreply@maisumporcento.com.br>',
-        to: authUser.user.email,
+        to: authData.user.email,
         subject: '📊 Seu resumo semanal',
         html: `
           <!DOCTYPE html>
