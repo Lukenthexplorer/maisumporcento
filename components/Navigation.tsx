@@ -19,6 +19,7 @@ export function Navigation() {
 
   const navItems = [
     { href: '/dashboard', label: 'Hoje' },
+    { href: '/tarefas', label: 'Tarefas' },
     { href: '/progresso', label: 'Progresso' },
     { href: '/equilibrio', label: 'Equilíbrio' },
     { href: '/goals', label: 'Objetivos' },

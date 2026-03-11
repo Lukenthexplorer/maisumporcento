@@ -13,7 +13,7 @@ export async function proxy(req: NextRequest) {
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/']
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname === route)
 
-  const protectedRoutes = ['/dashboard', '/progresso', '/equilibrio', '/goals', '/perfil']
+  const protectedRoutes = ['/dashboard', '/tarefas', '/progresso', '/equilibrio', '/goals', '/perfil']
   const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   if (isProtectedRoute && !session) {
