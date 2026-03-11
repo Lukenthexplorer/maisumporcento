@@ -11,9 +11,9 @@ export default function Home() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-neutral-600 text-sm">
-            <div className="hover:text-neutral-900 cursor-pointer">Início</div>
-            <div className="hover:text-neutral-900 cursor-pointer">Manifesto</div>
-            <div className="hover:text-neutral-900 cursor-pointer">Recursos</div>
+            <div className="hover:text-neutral-900 cursor-pointer"></div>
+            <div className="hover:text-neutral-900 cursor-pointer"></div>
+            <div className="hover:text-neutral-900 cursor-pointer"></div>
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-6">
