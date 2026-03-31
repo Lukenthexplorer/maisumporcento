@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'maisumporcento – 1% melhor por dia',
   description: 'Habit tracker minimalista focado em consistência, identidade e progresso incremental. Construa hábitos que duram.',
-  keywords: ['hábitos', 'habit tracker', 'produtividade', '1% melhor', 'consistência', 'atomic habits'],
+  keywords: ['Hábitos', 'habit tracker', 'produtividade', '1% melhor', 'consistência', 'atomic habits'],
   authors: [{ name: 'maisumporcento' }],
   creator: 'maisumporcento',
   publisher: 'maisumporcento',
